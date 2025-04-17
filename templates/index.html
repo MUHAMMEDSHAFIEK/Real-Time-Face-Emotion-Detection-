@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Emotion Detection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header class="text-center">
+            <h1>Real-time Emotion Detection</h1>
+            <p>Experience advanced facial emotion analysis powered by DeepFace</p>
+        </header>
+
+        <div class="grid">
+            <!-- Video Feed -->
+            <div>
+                <div class="video-container">
+                    <img src="{{ url_for('video_feed') }}" alt="Video Feed" class="video-feed">
+                    <div id="emotion-overlay" class="emotion-overlay">Analyzing...</div>
+                </div>
+                <div class="button-container">
+                    <a href="{{ url_for('stop') }}">
+                        <button class="button bg-red-600">Stop Camera</button>
+                    </a>
+                    <button id="toggle-history" class="button bg-blue-600">Toggle History</button>
+                </div>
+            </div>
+
+            <!-- Emotion History -->
+            <div>
+                <div id="history-panel" class="history-panel hidden">
+                    <h2>Emotion History</h2>
+                    <div id="emotion-history"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>Powered by Flask & DeepFace | © 2025 Emotion Detection App</p>
+        </footer>
+    </div>
+
+    <script>
+        // Toggle history panel
+        document.getElementById('toggle-history').addEventListener('click', () => {
+            const panel = document.getElementById('history-panel');
+            panel.classList.toggle('hidden');
+        });
+
+        // Simulate emotion updates (in real app, this would come from server via WebSocket or polling)
+        const emotions = ['happy', 'sad', 'angry', 'neutral', 'surprise'];
+        const historyContainer = document.getElementById('emotion-history');
+        const overlay = document.getElementById('emotion-overlay');
+
+        function updateEmotionHistory(emotion, confidence) {
+            const timestamp = new Date().toLocaleTimeString();
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            historyItem.textContent = `${timestamp}: ${emotion} (${confidence.toFixed(1)}%)`;
+            historyContainer.prepend(historyItem);
+
+            // Update overlay
+            overlay.textContent = `${emotion} (${confidence.toFixed(1)}%)`;
+
+            // Limit history to last 10 entries
+            while (historyContainer.children.length > 10) {
+                historyContainer.removeChild(historyContainer.lastChild);
+            }
+        }
+
+        // Simulate emotion detection updates
+        setInterval(() => {
+            const randomEmotion = emotions[Math.floor(Math.random() * emotions.length)];
+            const randomConfidence = Math.random() * 100;
+            updateEmotionHistory(randomEmotion, randomConfidence);
+        }, 3000);
+    </script>
+</body>
+</html>
